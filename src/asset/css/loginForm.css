@@ -1,0 +1,56 @@
+#loginForm{
+    position: absolute;
+    width: 50%;
+    height: 308px;
+    top :0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    min-width: 364px;
+    display: flex;
+}
+#siginupForm{
+    position: absolute;
+    width: 50%;
+    height: 308px;
+    top :0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    min-width: 364px;
+    display: flex;
+}
+.login-form{
+    margin: auto 0px auto 10px;
+}
+
+.login-form-button{
+    width: 100%;
+}
+.ant-input{
+    border: none !important;
+    border-bottom: 1px solid #ffffff !important;
+    background-color:  #fff0 !important;
+    border-radius: 0 !important;
+}
+.ant-input::placeholder {
+    color:rgb(0, 0, 0, 0.65);
+    
+    
+  }
+
+@media (max-width:940px){
+    #loginForm{
+      display: block;
+      height:338px;
+    }
+    .login-form{
+        margin: auto;
+    }
+    .login-form-button{
+        margin:auto 5% auto 5%;
+        width: 40%;
+    }
+} 
