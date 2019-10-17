@@ -1,0 +1,17 @@
+.ant-table-tbody{
+    color:white;
+}
+.ant-table-tbody>tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)>td {
+background: #367490;
+}
+
+.ant-table-tbody>tr>td, .ant-table-thead>tr> th{
+    text-align: center;
+}
+.ant-pagination.mini .ant-pagination-item:not(.ant-pagination-item-active){
+    background: #fffaf8;
+}
+.ant-pagination.mini .ant-pagination-prev .ant-pagination-item-link, 
+.ant-pagination.mini .ant-pagination-next .ant-pagination-item-link{
+    background: #fffaf8;
+}

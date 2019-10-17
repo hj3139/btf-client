@@ -61,3 +61,44 @@
         width:90%;
     }
 } 
+
+
+.trigger {
+    font-size: 18px;
+    line-height: 64px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+  
+.trigger:hover {
+    color: #1890ff;
+}
+.logo {
+    height: 32px;
+    background: #fe6500;
+    margin: 16px;
+    font-size: 25px;
+    color: white;
+    border-radius: 100px;
+    text-align: center;
+}
+.events {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.events .ant-badge-status {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    text-overflow: ellipsis;
+    font-size: 12px;
+}
+.notes-month {
+    text-align: center;
+    font-size: 28px;
+}
+.notes-month section {
+    font-size: 28px;
+}

@@ -4,7 +4,7 @@ import logo from '../../asset/img/logo.png';
 import axios from 'axios';
 
 
-const SignupComponent = ({match, history}) => {
+const SignupComponent = ({signPage}) => {
   interface IFormData {
     username:string;
     password:string;
@@ -40,18 +40,29 @@ const handleChange = e => {
 
 const handleJoin = () => {
 
-  if(form.username !== '' || form.password !=='' || form.securityNumber !== '' || form.email !== ''){
-
-  
+  if(form.username !== '' || form.password !=='' || form.email !== ''){
       axios.post('/api/users',{
         username : form.username,
         password : form.password,
         email:form.email,
         securityNumber : form.securityNumber,
         joinDate : `${year}${month}${day}` 
+      }).then(res => {
+        
+        const birthdayMonth = res.data.securityNumber.substring(2, 4);
+        const birthdayDay = res.data.securityNumber.substring(4, 6);
+        axios.post('/api/calendarData',{
+        title:res.data.username + " 생일",
+          rrule:{
+            freq:"yearly",
+            dtstart:`${year}-${birthdayMonth}-${birthdayDay}`
+          },
+          start:`${year}-${birthdayMonth}-${birthdayDay}`
+        })
       }).catch(error => {
         alert("이미 가입한 회원입니다.");
       }); 
+      signPage();
     }else{
       alert('정확한정보를 입력해주세요');
     }
@@ -113,7 +124,7 @@ const handleJoin = () => {
             <Button type="primary" className="login-form-button" onClick={handleJoin} >
                   가입
             </Button>
-            <Button type="primary" className="login-form-button" onClick={history.goBack}>      
+            <Button type="primary" className="login-form-button" onClick={signPage}>      
                   취소
             </Button>
           </Form.Item>

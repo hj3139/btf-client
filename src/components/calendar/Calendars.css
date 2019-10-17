@@ -1,0 +1,44 @@
+.fc-center>h2{
+    color:#ebebeb;
+}
+.fc-center{
+    position: relative;
+    top: 13px;
+}
+.fc-highlight{
+   background: #7cb9c5 !important;
+}
+.fc-today{
+    background:#5cc0de !important;
+}
+.fc{
+    color:white;
+}
+.fc-button{
+    position: relative;
+    top:13px;
+    background:#DF691A;
+    
+}
+
+.fc td, .fc th {
+    border: 1px solid rgba(0,0,0,0.15);
+}
+
+.fc-toolbar{
+    text-align: center;
+}
+.fc-dayGrid-view .fc-day-number{
+    padding:4px !important;
+}
+.ant-page-header-heading-title{
+    color:#21eff1d9;
+}
+@media (max-width:980px){
+    .fc-week{
+        height:89px !important;
+    }
+    .fc-scroller{
+        height:534px !important;
+    }
+}
