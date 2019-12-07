@@ -7,7 +7,7 @@ const EventList = ({eventList}) => {
         <React.Fragment>
            <div style={{width:'60%', margin:'0 auto', textAlign:'center'}}>
                 {
-                    eventList.map((array, index) => {
+                    eventList.map((array:any, index:any) => {
                         let icon;
                         if(array.rrule !== undefined) {
                             icon = 'gift'

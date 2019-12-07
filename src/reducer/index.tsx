@@ -1,9 +1,13 @@
 import { combineReducers } from 'redux';
-import calendar from './calendar';
+import login from './login';
+import userData from './userData';
 
 
 const rootReducer = combineReducers({
-    calendar
+    login,
+    userData
 });
 
 export default rootReducer;
+
+export type RootState = ReturnType<typeof rootReducer>;

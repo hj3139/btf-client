@@ -15,3 +15,12 @@ background: #367490;
 .ant-pagination.mini .ant-pagination-next .ant-pagination-item-link{
     background: #fffaf8;
 }
+
+.ant-input-group>.ant-input{
+    color:white;
+}
+
+.ant-input-group-addon{
+    width:40px;
+    height:32px;
+}

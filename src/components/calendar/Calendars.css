@@ -1,6 +1,7 @@
 .fc-center>h2{
     color:#ebebeb;
 }
+
 .fc-center{
     position: relative;
     top: 13px;
@@ -19,6 +20,9 @@
     top:13px;
     background:#DF691A;
     
+}
+.fc-header{
+    color:black;
 }
 
 .fc td, .fc th {

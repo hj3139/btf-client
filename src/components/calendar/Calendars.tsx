@@ -11,19 +11,25 @@ import { Form, Input, Button, PageHeader } from 'antd';
 import * as moment  from 'moment';
 import axios from 'axios';
 import EventList from './EventList';
+import { useSelector } from 'react-redux';
+import {RootState} from '../../reducer';
 
-const Calenders = ({loginKey}) => {
+
+
+const Calenders = () => {
   const [eventData, setEventData] = React.useState();  
   const [inputEventData, setInputEventData] = React.useState();
   const [selectDate, setSelectDate] = React.useState();
-  const [admin, setAdmin] = React.useState(false);
   const [eventList, setEventList] = React.useState();
+  const [selectables, setSelectables] = React.useState(false);
+  const loginData = useSelector( (state:RootState) => state.login.loginKey);
+  const userData = useSelector((state:RootState) => state.userData.data);
 
+  
+  const dateClick = (info : any) => {   
 
-  const dateClick = (info : any) => {    
-    
-    console.log(info);
-    if(!admin){
+    if(userData.usertype !== 'admin'){
+      console.log(false)
       axios.get('/api/calendarData')
        .then(res => {
          setEventList(
@@ -41,11 +47,23 @@ const Calenders = ({loginKey}) => {
          ? document.getElementsByClassName('ant-layout-content')[0].scrollTo(0,0)
          : document.getElementsByClassName('ant-layout-content')[0].scrollTo(0,document.getElementsByClassName('ant-layout-content')[0].clientHeight);
        })
-     }
+  }
+
+   
   }
 
   const select = (selectInfo : any) => {
     setSelectDate(selectInfo.startStr);
+    const b = document.createElement('input');
+    b.setAttribute('class', 'ant-input');
+    b.style.width = '100%';
+    b.style.height = '100%';
+    if(selectables){
+      setSelectables(!setSelectables)
+      document.getElementsByClassName('fc-highlight')[0].appendChild(b)
+    }
+    console.log(selectInfo)
+    console.log("aaaaa")
 
   }
 
@@ -55,31 +73,21 @@ const Calenders = ({loginKey}) => {
       title:inputEventData,
       start:selectDate,
   })
-  .then(() =>{
-    axios.get('/api/calendarData?access_token=' + loginKey.id)
-    .then(res => {
-      console.log(res.data);
-      setEventData({
-        events:res.data
+    .then(() =>{
+      axios.get('/api/calendarData?access_token=' + loginData.id)
+      .then(res => {
+        setEventData({
+          events:res.data
+        })
       })
     })
-  })
-  console.log(eventData);
-    }else{
+  }else{
       alert("일정을 추가할 날짜를 선택해 주세요");
     }
   }
 
   React.useEffect(() => {  
-    
-    axios.get('/api/users/' + loginKey.userId + '?access_token=' + loginKey.id)
-    .then(res => {
-      if(res.data.usertype === 'admin'){
-        setAdmin(true);
-      }
-    });  
-    
-    axios.get('/api/calendarData?access_token=' + loginKey.id)
+    axios.get('/api/calendarData')
     .then(res => {
       setEventData({
         events:res.data
@@ -90,17 +98,11 @@ const Calenders = ({loginKey}) => {
 
   const deleteEvent = (info: any) => {
 
-
-    console.log(info)
-    console.log(info.event.start)
- 
-    if(admin){
+    if(userData.usertype === 'admin'){
       for(let i = 0; i < eventData.events.length; i ++){
-        console.log(i);
         if(eventData.events[i].rrule === undefined){
           if(eventData.events[i].id === info.event._def.publicId 
           && eventData.events[i].start === moment(info.event.start).format("YYYY-MM-DD")){
-            console.log("same")
             axios.delete("/api/calendarData/" + info.event._def.publicId)
             setEventData({
               events:[
@@ -131,14 +133,11 @@ const Calenders = ({loginKey}) => {
         : document.getElementsByClassName('ant-layout-content')[0].scrollTo(0,document.getElementsByClassName('ant-layout-content')[0].clientHeight);
       })
     }
-
-    console.log("delete")
   }
 
 
   const changeEventData = (e : any) => {
     setInputEventData(e.target.value)
-    console.log(e.target.value);
   }
 
     return(
@@ -158,16 +157,16 @@ const Calenders = ({loginKey}) => {
             eventLongPressDelay={0}
             selectLongPressDelay={0}
             dateClick={dateClick}
+            unselectAuto={selectables}
             locales={koLocale}
             locale='ko'
             header={{left:'prev', center:'title', right:'next'}}
             height={800}
             handleWindowResize={false}
             select={select}
+            eventLimitText="개 더보기"
             eventLimit={true}
             eventClick={deleteEvent}
-            eventLimitText="개 더보기"
-            allDayDefault={true}
             views={
               {
                 timeGird:{
@@ -178,16 +177,17 @@ const Calenders = ({loginKey}) => {
             eventSources={
               [
                 {
-                 ...eventData
+                  ...eventData
                 }
               ]
             }
+
           />
           {
-            admin ? 
+            userData.usertype === 'admin' ? 
               <Form style={{textAlign:'center'}}>
                 <Form.Item>
-                  <Input id="inputData" style={{width:'60%'}} onChange={changeEventData} autoFocus={true} />
+                  <Input id="inputData" style={{width:'60%', color:'white'}} onChange={changeEventData} autoFocus={true} />
                 </Form.Item>
                 <Form.Item>
                   <Button style={{width:'60%'}} block={true} onClick={addEvnet} > Add + </Button>
