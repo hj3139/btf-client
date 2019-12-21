@@ -1,6 +1,6 @@
 import * as React from 'react';
 import axios from 'axios';
-/*import logo from '../asset/img/logo.png';*/
+import logo from '../asset/img/logo.png';
 import 'antd/dist/antd.css';
 import '../asset/css/loginForm.css';
 import LoginComponent from './signin/LoginComponent';
@@ -54,15 +54,14 @@ const Login = () => {
       [e.target.name] : e.target.value
     })
   }
-
     return( 
         <React.Fragment>
             {!singup ?
                 <React.Fragment>
                 {
                     !login ? 
-                    <div id="loginForm">
-                        <img src={ '' } alt="logo" style={ {margin:'auto', display:'flex'} } id="logo"/>
+                    <div id="loginForm" style={{height:window.innerHeight}}>
+                        <img src={ `${logo}` } alt="logo" style={ {margin:'auto', display:'flex', width:360} } id="logo"/>
                         <LoginComponent handleChange={handleChange} handleLogin={handleLogin} loginData={loginData} signPage={signPage} />
                     </div>
                     : <Home setLogin={setLogin} />

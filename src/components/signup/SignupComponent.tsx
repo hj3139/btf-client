@@ -71,8 +71,8 @@ const handleJoin = () => {
   
  return(
     <React.Fragment>
-       <div id="loginForm">
-            <img src={ logo } alt="logo" style={ {margin:'auto', display:'block'} } id="logo"/>
+       <div id="loginForm" style={{height:window.innerHeight}}>
+            <img src={ logo } alt="logo" style={ {margin:'auto', display:'block', width:'360px'} } id="logo"/>
      <Form 
             style={{
                 width:'50%', 

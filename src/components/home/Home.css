@@ -1,6 +1,11 @@
 .ant-dropdown-menu{
     border-radius: 0;
 }
-.ant-dropdown{
+
+.ant-dropdown, .ant-dropdown-menu-submenu-popup{
     top:64px !important;
+}
+
+.ant-dropdown-menu-submenu-popup{
+    left:40% !important;
 }

@@ -12,6 +12,9 @@ const MainScoreBoard = ({history}:any) => {
   const [boardListData, setBoardListData] = React.useState();
   const [tableLoading, setTableLoding] = React.useState(true);
   const addEvent = () => {
+   boardTitle === ''
+   ? (() => alert('민규야 제목입력해라'))() 
+    :(() => {
     const today = new Date();
     const year = (today.getFullYear()).toString();
     let month = (today.getMonth() + 1).toString();
@@ -26,7 +29,7 @@ const MainScoreBoard = ({history}:any) => {
     }
     const num:any = Object.values(boardListData)[0];
     let boardListNum:number = Object.values(boardListData).length !== 0 ? num.key : 0;
-    setTableLoding(true);
+    setTableLoding(true); 
     axios.post('/api/mainscoreBoardData', {
       key:++boardListNum,
       title:boardTitle,
@@ -41,6 +44,7 @@ const MainScoreBoard = ({history}:any) => {
         setTableLoding(false)
       })
     })
+  })()
   }
   
   const changeTitle = (e:any) => {
@@ -82,7 +86,7 @@ const MainScoreBoard = ({history}:any) => {
     return(
     <React.Fragment>
         <PageHeader 
-            title="정기모임 게시판"
+            title="정모점수 게시판"
             style={{
             background: "#00d0ff5e",
             }}

@@ -76,9 +76,11 @@
 }
 .logo {
     height: 32px;
-    background: #fe6500;
+    background: #5f5f5f;
     margin: 16px;
-    font-size: 25px;
+    width:70%;
+    line-height:32px;
+    font-size: 15px;
     font-weight: 800;
     color: white;
     border-radius: 100px;

@@ -5,11 +5,13 @@ import { Link, Route, Switch, Redirect } from 'react-router-dom';
 import { Layout, Menu, Icon, Dropdown } from 'antd';
 import axios from 'axios';
 import { MainScoreBoard, MainScoreInput } from '../mainscore';
+import { MainAttend } from '../mainAttend';
 import { Calendars } from '../calendar';
-import User from '../user/User';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../reducer';
+import { HotMeeting } from '../hotMeeting';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../reducer';
 import { userDataFc } from '../../reducer/userData';
+import { MainPhotoBoard } from '../mainphoto';
 
 
 const Home = ({setLogin}) =>{
@@ -35,7 +37,6 @@ const Home = ({setLogin}) =>{
     }
     
     React.useEffect(() => {
-        console.log("aaaaaa");
         console.log(userData);
         axios.get(`/api/users/${loginData.userId}?access_token=${loginData.id}`).then(res => {
             dispatch(userDataFc(res.data));
@@ -48,28 +49,40 @@ const Home = ({setLogin}) =>{
     <Layout style={{width:"100%", height:"100%"}}>
                  { window.innerWidth > 540 ? 
                  <Sider trigger={null} collapsible={true} collapsed={collapsed} theme="dark">
-                <div className="logo" >BTF</div>
+                <div className="logo" >MAJOR</div>
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={['mainscore']} >
                     <SubMenu 
                         key="user" 
                         title={
                             <span>
                                 <Icon type="user" />
-                                <span>게시판</span> 
+                                <span>정모게시판</span> 
                             </span>
                         }
                     
                     >
-                        <Menu.Item key="mainscore" onClick={menuClick}><Link to='/mainscore' />점수기록</Menu.Item>
-                        <Menu.Item>abc</Menu.Item>
-                        <Menu.Item>def</Menu.Item>
-                        <Menu.Item>ghi</Menu.Item>
+                        <Menu.Item key="mainscore" onClick={menuClick}><Link to='/mainscore' />정모점수</Menu.Item>
+                        <Menu.Item key="mainAttend" onClick={menuClick}><Link to="/mainAttend" />참가신청</Menu.Item>
+                        <Menu.Item><Link to='/mainPhoto'>정모사진</Link></Menu.Item>
                     </SubMenu>
-                    <Menu.Item key="name" onClick={menuClick}>
-                        <Icon type="video-camera" />
-                        <span>김호정</span>
-                        <Link to='/user' />
-                    </Menu.Item>
+                    <SubMenu 
+                        key="name" 
+                        title={
+                            <span>
+                                <Icon type="video-camera" />
+                                <span>번개게시판</span>
+                            </span>
+                        }
+                    >
+                        <Menu.Item key="oneday" onClick={menuClick}>
+                            <Link to='/hotMeeting' />
+                            번개등록
+                        </Menu.Item>    
+                        <Menu.Item>
+                            번개사진    
+                        </Menu.Item>    
+                        
+                    </SubMenu>
                     <Menu.Item key="calendar" onClick={menuClick}>
                         <Icon type="calendar" />
                         <span>이달의 일정</span>
@@ -98,23 +111,36 @@ const Home = ({setLogin}) =>{
                 <Dropdown 
                     overlay={
                         <Menu theme="dark" selectable={true} defaultSelectedKeys={['mainscore']}  >
-                            <SubMenu selectable={true} key="user" title={<span>게시판</span>}>
+                            <SubMenu selectable={true} key="user" title={<span>정모 게시판</span>}>
                                 <Menu.Item key="mainscore" onClick={menuClick}>
                                     <Link to='/mainscore'>
                                         정모점수    
                                     </Link>
                                 </Menu.Item >  
-                                <Menu.Item>
-                                    정모점수    
+                                <Menu.Item key="mainAttend" onClick={menuClick}>
+                                    {
+                                        '준비중'
+                                    /*<Link to="/mainAttend">
+                                        참가신청
+                                    </Link>*/
+                                    }
                                 </Menu.Item>
-                                <Menu.Item>
-                                    정모점수    
+                                <Menu.Item key="mainPhoto">
+                                    {
+                                        '준비중'
+                                        /*<Link to='/mainPhoto'>
+                                            정모사진    
+                                        </Link>*/
+                                    }
                                 </Menu.Item>
                             </SubMenu>
                             <Menu.Item key="name" onClick={menuClick}>
-                                <Link to='/user'>
-                                    김호정
-                                </Link>
+                                {
+                                    '준비중'
+                                    /*<Link to='/hotMeeting'>
+                                    번개게시판
+                                    </Link>*/
+                                }
                             </Menu.Item>
                            
                             <Menu.Item  key="/calendar" onClick={menuClick}>
@@ -126,7 +152,7 @@ const Home = ({setLogin}) =>{
                         
                     } 
                     overlayStyle={{
-                        width:'80%'
+                        width:'40%'
                     }}
                     trigger={['click']}
                 >
@@ -149,7 +175,7 @@ const Home = ({setLogin}) =>{
                         right:0,
                         fontSize:25, 
                         color:'white', 
-                        background:'#fe6500',
+                        background: '#5f5f5f',
                         fontWeight:800,
                         textAlign:'center',
                         margin: '0 auto',
@@ -157,7 +183,7 @@ const Home = ({setLogin}) =>{
                         borderRadius: '100px'
                     }}
                 >
-                    BTF
+                    MAJOR
                 </div> 
                 <Link to ='/'>
                     <Icon 
@@ -180,7 +206,9 @@ const Home = ({setLogin}) =>{
                 <Route exact={true} path='/' render={() => <Redirect to='/mainscore' />} />
                 <Route exact={true} path='/mainscore' component={MainScoreBoard} />
                 <Route exact={true} path='/mainscore/data'  render={ (location) => <MainScoreInput location={location} userData={userData} /> }/>
-                <Route exact={true} path='/user' component={User} />
+                <Route exact={true} path='/hotMeeting' component={HotMeeting} />
+                <Route exact={true} path='/mainAttend' component={MainAttend} />
+                <Route exact={true} path='/mainPhoto' component={MainPhotoBoard} />
                 <Route exact={true} path='/calendar' component={Calendars}/>
             </Switch>
         </Content>
