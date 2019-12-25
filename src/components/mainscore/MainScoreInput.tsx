@@ -4,22 +4,23 @@ import axios from 'axios';
 import './MainScoreInput.css'
 
 const MainScoreInput = (location:any) =>{
-    const [scoreData, setScoreData] = React.useState();
+    const [scoreData, setScoreData] = React.useState({
+        firstGame:'0',
+        secondGame:'0',
+        thirdGame:'0',
+        fourGame:'0'
+    });
+    console.log(location)
     const [dataSource, setDataSource] = React.useState([{}]);
     const [buttonCount, setButtonCount] = React.useState(0);
     const onChangeScore = (e:any) => {
         const name = e.target.name;
         const value = e.target.value;
+
         
-      scoreData 
-      ?  
-       setScoreData({
-           ...scoreData,
-           [name] : value,
-       })
-      :  
         setScoreData({
-            [name] : value,
+            ...scoreData,
+           [name] : value,
         })
     }
 
@@ -29,31 +30,37 @@ const MainScoreInput = (location:any) =>{
             for(let i = 0; i < Object.keys(scoreData).length; i++){
                 let scoreValue: any;
                 scoreValue = Object.values(scoreData);
-                totalScore+=parseInt(scoreValue[i], 10);
+              location.userData.data.sex === '여' ? totalScore += parseInt(scoreValue[i] , 10) + 15 : totalScore += parseInt(scoreValue[i] , 10);
             }
+           
+            
             console.log(totalScore);
-            axios.get(`/api/mainScoreData/getMyScore?getName=${location.userData.data.username}&getDate=${location.location.location.state.date}`)
+            
+            axios.get(`/api/mainScoreData/getMyScore?getName=${location.userData.data.username}&getId=${location.location.location.state.id}`)
             .then(res => {
-                if(res.data.result.length > 0){
-                    axios.patch(
-                        `/api/mainScoreData/${res.data.result[0]._id}`,
-                        {
-                            score:scoreData,
-                            avg:totalScore/Object.keys(scoreData).length       
-                        }
-                    ).then(() => {
-                        setButtonCount(buttonCount+1)
-                    })
-                }else{
-                    axios.post('/api/mainScoreData', {
-                        username:location.userData.data.username,
-                        date:location.location.location.state.date,
+                console.log(res);
+                res.data.result.length > 0
+                ?
+                axios.patch(
+                    `/api/mainScoreData/${res.data.result[0]._id}`,
+                    {
                         score:scoreData,
-                        avg:totalScore/Object.keys(scoreData).length
-                    }).then(()=> {
-                        setButtonCount(buttonCount+1)
-                    })
-                }
+                        avg: (totalScore/Object.keys(scoreData).length).toFixed(2)
+                    }
+                ).then(() => {
+                    setButtonCount(buttonCount + 1)
+                })
+                :
+                axios.post('/api/mainScoreData',{
+                    username:location.userData.data.username,
+                    userId:location.userData.data.id,
+                    date:location.location.location.state.date,
+                    boardId:location.location.location.state.id,
+                    score:scoreData,
+                    avg: (totalScore/Object.keys(scoreData).length).toFixed(2)
+                }).then(() => {
+                    setButtonCount(buttonCount + 1)
+                })
             })
         }catch{
             alert('점수입력하세요')
@@ -63,8 +70,7 @@ const MainScoreInput = (location:any) =>{
     }
 
     React.useEffect(() => {
-
-        axios.get(`/api/mainScoreData/getScoreAll?getDate=${location.location.location.state.date}`)
+        axios.get(`/api/mainScoreData/getScoreAll?getId=${location.location.location.state.id}`)
         .then(res => {
             let data:any; 
             data = res.data.result;
@@ -88,12 +94,16 @@ const MainScoreInput = (location:any) =>{
                 for(const i of res.data.result){
                     i.username === location.userData.data.username
                     ?
-                    setScoreData(i.score)
+                    (() => {
+                        console.log(i.score)
+                        setScoreData(i.score)
+                        
+                    })()
                     :(()=> console.log())()
                 }
             })()
-        })
-
+        });
+        
     },[buttonCount])
 
     const colums: any = [

@@ -68,15 +68,76 @@ const MainScoreBoard = ({history}:any) => {
       title: '제목',
       dataIndex: 'title',
       key: 'title',
-      width:"55%"
+      width:"55%",
+      render: (text:any,recode:any) => <div onClick={() => {
+        history.push(
+          {
+            pathname:'/mainscore/data',
+            state:recode
+          }
+        )
+      }}>{text}</div>
+    },
+  ];
+  const columns2 : any = [
+    {
+      title: '번호',
+      dataIndex: 'key',
+      key: 'key',
+      width:'20%'
+    },
+    {
+      title: '작성자',
+      dataIndex: 'name',
+      key: 'name',
+      width:"25%"
+    },
+    {
+      title: '제목',
+      dataIndex: 'title',
+      key: 'title',
+      width:"55%",
+      render: (text:any,recode:any) => <div onClick={() => {
+        history.push(
+          {
+            pathname:'/mainscore/data',
+            state:recode
+          }
+        )
+      }}>{text}</div>
+    },
+    {
+      title: 'Action',
+      dataIndex: '',
+      key: 'x',
+      render: (index:any, recode:any, text:any) =>
+       <a 
+        onClick={() => {
+          axios.delete('http://ec2-54-180-32-185.ap-northeast-2.compute.amazonaws.com:3000/api/mainscoreBoardData/'+ recode.id).then(() => {
+            axios.get('/api/mainscoreBoardData').then(res => {
+              console.log(res)
+              res.data.length > 0 ? setBoardListData(res.data.reverse()) : setBoardListData([]);
+
+            });
+            axios.post('/api/mainScoreData/removeAll', {removeId:recode.id}).then((res) => {
+              console.log(res);
+            })
+          })
+        }} 
+      >
+        Delete
+      </a>,
     }
   ];
+
 
   
 
   React.useEffect(() => {
+    console.log(userData);
     axios.get('/api/mainscoreBoardData').then(res => {
-     setBoardListData(res.data.reverse())
+      console.log(res)
+      setBoardListData(res.data.reverse())
     })
     .then(() =>{
       setTableLoding(false)
@@ -92,20 +153,8 @@ const MainScoreBoard = ({history}:any) => {
             }}
         />
         <Table 
-          columns={columns} 
+          columns={userData.usertype === 'admin' ? columns2 : columns} 
           dataSource={boardListData}
-          onRow={(recode, rowIndex) => {
-            return{
-              onClick: evnet => {
-                history.push(
-                  {
-                    pathname:'/mainscore/data',
-                    state:recode
-                  }
-                )
-              }
-            }
-          }}
           pagination={{
               size:"small"
           }}

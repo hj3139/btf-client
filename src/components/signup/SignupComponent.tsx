@@ -10,10 +10,11 @@ const SignupComponent = ({signPage}) => {
     password:string;
     securityNumber:string;
     email:string;
+    sex:string;
   }
 
   
-const [form, setValues] = React.useState<IFormData>({username:'', password:'', securityNumber:'', email:''});
+const [form, setValues] = React.useState<IFormData>({username:'', password:'', securityNumber:'', email:'', sex:''});
 const today = new Date();
 const year = (today.getFullYear()).toString();
 let month = (today.getMonth() + 1).toString();
@@ -29,7 +30,7 @@ if(parseInt(month, 10) < 10){
 
 console.log(`${year}${month}${day}`);
 
-const handleChange = e => {
+const handleChange = (e:any) => {
   setValues({
     ...form,
     [e.target.name] : e.target.value
@@ -41,31 +42,23 @@ const handleChange = e => {
 const handleJoin = () => {
 
   if(form.username !== '' || form.password !=='' || form.email !== ''){
-      axios.post('/api/users',{
-        username : form.username,
-        password : form.password,
-        email:form.email,
-        securityNumber : form.securityNumber,
-        joinDate : `${year}${month}${day}` 
-      }).then(res => {
-        
-        const birthdayMonth = res.data.securityNumber.substring(2, 4);
-        const birthdayDay = res.data.securityNumber.substring(4, 6);
-        axios.post('/api/calendarData',{
-        title:res.data.username + " 생일",
-          rrule:{
-            freq:"yearly",
-            dtstart:`${year}-${birthdayMonth}-${birthdayDay}`
-          },
-          start:`${year}-${birthdayMonth}-${birthdayDay}`
-        })
-      }).catch(error => {
-        alert("이미 가입한 회원입니다.");
-      }); 
-      signPage();
-    }else{
-      alert('정확한정보를 입력해주세요');
-    }
+    axios.post('/api/users',{
+      username : form.username,
+      password : form.password,
+      email:form.email,
+      securityNumber : form.securityNumber,
+      sex: form.sex,
+      joinDate : `${year}${month}${day}` 
+    }).then(res => {
+      location.reload();
+      alert('가입완료');
+    }).catch(error => {
+      alert('가입 실패');
+    });
+     
+  }else{
+    alert('정확한정보를 입력해주세요');
+  }
 }
 
   
@@ -109,6 +102,15 @@ const handleJoin = () => {
               name="username"
               onChange={handleChange}
               value={form.username}
+            />
+          </Form.Item>
+          <Form.Item>
+          <Input
+              prefix={ <Icon type="user" style={{ color: 'rgba(0, 0, 0, .7)' }} /> }
+              placeholder="남 or 여"
+              name="sex"
+              onChange={handleChange}
+              value={form.sex}
             />
           </Form.Item>
           <Form.Item>

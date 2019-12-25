@@ -4,25 +4,27 @@ import 'antd/dist/antd.css';
 import { Link, Route, Switch, Redirect } from 'react-router-dom';
 import { Layout, Menu, Icon, Dropdown } from 'antd';
 import axios from 'axios';
+import {useCookies} from 'react-cookie';
 import { MainScoreBoard, MainScoreInput } from '../mainscore';
 import { MainAttend } from '../mainAttend';
 import { Calendars } from '../calendar';
 import { HotMeeting } from '../hotMeeting';
-import { useDispatch, useSelector } from 'react-redux';
+import { UserInfo } from '../userInfo';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../reducer';
-import { userDataFc } from '../../reducer/userData';
 import { MainPhotoBoard } from '../mainphoto';
+
 
 
 const Home = ({setLogin}) =>{
     const { Header, Sider, Content } = Layout;
-    const {SubMenu} : any = Menu;
+    const { SubMenu } : any = Menu;
+    const [cookies,setCookie] =  useCookies(['login-key']);
     const [collapsed, setCollapsed] = React.useState(true);
     const [pageState, setPageState] = React.useState('1');
     const [headerName, setHeaderName] = React.useState('');
     const loginData = useSelector( (state:RootState) => state.login.loginKey);
     const userData = useSelector( (state:RootState) => state.userData);
-    const dispatch = useDispatch();
 
     const toggle = () => {
         setCollapsed(!collapsed)
@@ -31,18 +33,20 @@ const Home = ({setLogin}) =>{
         setPageState(key);
     }
     const logout = () => {
-        axios.post(`/api/users/logout?access_token=${loginData.id}`).then(res => {
-            setLogin(false)    
+        console.log(loginData);
+        setCookie("loginkey",'', {path:'/'});   
+        axios.post(`/api/users/logout?access_token=${loginData.id ? loginData.id : loginData._id}`).then(res => {
+            setLogin(false) 
+            console.log(cookies)
         });
     }
     
     React.useEffect(() => {
-        console.log(userData);
-        axios.get(`/api/users/${loginData.userId}?access_token=${loginData.id}`).then(res => {
-            dispatch(userDataFc(res.data));
+       Object.values(userData.data).length > 0
+       ? axios.get(`/api/users/${loginData.userId}?access_token=${loginData.id}`).then(res => {
             setHeaderName(res.data.username);
             return res;
-        });
+        }) : (() => {console.log("no userData")})()
     },[])
     console.log(pageState);
     return(       
@@ -134,6 +138,11 @@ const Home = ({setLogin}) =>{
                                     }
                                 </Menu.Item>
                             </SubMenu>
+                            <Menu.Item key="userInfo" onClick={menuClick}>
+                                <Link to= '/userInfo'>
+                                    회원정보
+                                </Link> 
+                            </Menu.Item>
                             <Menu.Item key="name" onClick={menuClick}>
                                 {
                                     '준비중'
@@ -143,11 +152,13 @@ const Home = ({setLogin}) =>{
                                 }
                             </Menu.Item>
                            
-                            <Menu.Item  key="/calendar" onClick={menuClick}>
-                                <Link to='calendar'>
-                                    이달의 일정
-                                </Link>
-                            </Menu.Item>
+                            {
+                                /*<Menu.Item  key="/calendar" onClick={menuClick}>
+                                    <Link to='calendar'>
+                                        이달의 일정
+                                    </Link>
+                                </Menu.Item>*/
+                            }
                         </Menu>
                         
                     } 
@@ -210,6 +221,7 @@ const Home = ({setLogin}) =>{
                 <Route exact={true} path='/mainAttend' component={MainAttend} />
                 <Route exact={true} path='/mainPhoto' component={MainPhotoBoard} />
                 <Route exact={true} path='/calendar' component={Calendars}/>
+                <Route exact={true} path='/userInfo' component={UserInfo} />
             </Switch>
         </Content>
         </Layout>

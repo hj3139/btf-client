@@ -8,6 +8,9 @@ import Home from './home/Home';
 import SignupComponent from './signup/SignupComponent';
 import {useDispatch} from 'react-redux';
 import {loginKeyFc} from '../reducer/login';
+import {userDataFc} from '../reducer/userData';
+import {useCookies} from 'react-cookie';
+
 
 
 
@@ -19,9 +22,9 @@ const Login = () => {
   }
 
   const dispatch = useDispatch();
-  
+  const [cookies,setCookie] =  useCookies(['loginkey']);
   const [loginData, setLoginData] = React.useState<ILoginData>({email:'', password:''});
-  const [login, setLogin] =React.useState(false);
+  const [login, setLogin] =React.useState(true);
   const [singup, setSignup] = React.useState(false);
 
   const signPage = () => {
@@ -29,23 +32,35 @@ const Login = () => {
   }
 
   const handleLogin = () => {
+  cookies.loginkey !== undefined && cookies.loginkey !== ''? 
+    (() => {
+      console.log("로그인유지 & 자동로그인")
+    })()
+    :
     axios.post('/api/users/login',{
       email:loginData.email,
       password:loginData.password
     }).then(res => {
+      axios.get('/api/users/' + res.data.userId + "?access_token=" + res.data.id).then(
+        response => {
+          dispatch(userDataFc(response.data))
+        }
+      )
       dispatch(loginKeyFc(res.data));
       setLoginData({
         email:'',
         password:''
       })
+      return res;
     }).then(res => {
-        setLogin(true);
-        
+      setLogin(true);   
+      setCookie('loginkey', res.data.id, {path: '/'})
    })
     .catch(err => {
       setLogin(false);
       alert("id, 비밀번호 확인")
     })
+   
   }
 
   const handleChange = (e:any) => {
@@ -54,6 +69,20 @@ const Login = () => {
       [e.target.name] : e.target.value
     })
   }
+  React.useEffect(() => {
+   cookies.loginkey !== undefined && cookies.loginkey !== '' ? 
+    axios.get('/api/accessTokens/getUser?getUser=' + cookies.loginkey + '&access_token=' + cookies.loginkey).then(res => {
+      dispatch(loginKeyFc(res.data.result[0]));
+    
+      return axios.get('/api/users/' + res.data.result[0].userId + '?access_token=' + cookies.loginkey)
+    }).then(res => {
+      setLogin(true);
+      dispatch(userDataFc(res.data));
+    })
+   :(() => {
+     setLogin(false)
+   })()
+  },[])
     return( 
         <React.Fragment>
             {!singup ?
