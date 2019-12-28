@@ -84,6 +84,7 @@ const UserInfo = () => {
             rowKey={(recode:any) => `${recode.username}`}
             dataSource={dataSource} 
             loading={tableLoading}
+            style={{color:'black'}}
         />
         </React.Fragment>
     )

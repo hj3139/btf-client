@@ -13,6 +13,7 @@ import { UserInfo } from '../userInfo';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../reducer';
 import { MainPhotoBoard } from '../mainphoto';
+import MainAttendInput from '../mainAttend/MainAttendInput';
 
 
 
@@ -122,12 +123,9 @@ const Home = ({setLogin}) =>{
                                     </Link>
                                 </Menu.Item >  
                                 <Menu.Item key="mainAttend" onClick={menuClick}>
-                                    {
-                                        '준비중'
-                                    /*<Link to="/mainAttend">
+                                    <Link to="/mainAttend">
                                         참가신청
-                                    </Link>*/
-                                    }
+                                    </Link>
                                 </Menu.Item>
                                 <Menu.Item key="mainPhoto">
                                     {
@@ -222,6 +220,8 @@ const Home = ({setLogin}) =>{
                 <Route exact={true} path='/mainPhoto' component={MainPhotoBoard} />
                 <Route exact={true} path='/calendar' component={Calendars}/>
                 <Route exact={true} path='/userInfo' component={UserInfo} />
+                <Route exact={true} path='/mainAttend/data' render={ (location) => <MainAttendInput location={location} userData={userData}/>} />
+
             </Switch>
         </Content>
         </Layout>
