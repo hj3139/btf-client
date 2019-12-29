@@ -5,8 +5,10 @@ import axios from 'axios';
 const MainAttendInput = (location:any) => {
     console.log(location);
     console.log(location.userData);
+    // 신청버튼 취소버튼 로딩이 일단 디스어블시키고 신청유무후 버튼 활성화로 바꾸기. 현재는 활성화에서 디스어블시킴.
+
     const userData = location.userData.data;
-    const [attendDisable, setAttendDisable] = React.useState(false);
+    const [attendDisable, setAttendDisable] = React.useState(true);
     const [dettendDisable, setDettendDisable] = React.useState(true);
     const [modalVisible, setModalVisible] = React.useState(false);
     const [attendList, setAttendList] = React.useState();
@@ -49,7 +51,6 @@ const MainAttendInput = (location:any) => {
     const attendListButton = () => {
         setModalVisible(true);
         axios.get(`/api/attendUsers/getList?getBoardId=${location.location.location.state.id}`).then(res => {
-            console.log(res.data.result)
             setAttendList(res.data.result);
             setTableLoading(false);
         })
@@ -58,14 +59,16 @@ const MainAttendInput = (location:any) => {
     React.useEffect(() => {
         Object.values(userData).length > 0 ? axios.get(`/api/attendUsers/getUser?getName=${userData.username}&getBoardId=${location.location.location.state.id}`)
             .then(res => {
+                console.log(res.data.result[0].boardId);
+                console.log(location.location.location.state.id);
                 res.data.result.length > 0 
                 ? (() => {
                     setAttendDisable(true);
                     setDettendDisable(false);
                 })()
                 : setAttendDisable(false)
-
-            console.log(attendList)
+            }).catch(() => {
+                setAttendDisable(false)
             })
         :(()=>{console.log('no userData')})()
     }, [userData])
@@ -96,11 +99,11 @@ const MainAttendInput = (location:any) => {
 
                 <Table 
                     dataSource={attendList ? attendList : []} 
-                    rowKey={(recode:any) => `${recode.key}`}
                     loading={tableLoading}
                     pagination={false}
                     columns={columns}
                     style={{marginTop:'20px'}}
+                    rowKey={(recode:any) => `${recode._id}`}
                     scroll={{y: 400 }}
                 />
             </Modal>

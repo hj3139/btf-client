@@ -8,9 +8,13 @@ import '../mainscore/MainScoreBoard.css';
 import { RootState } from 'src/reducer';
 
 const MainAttend = ({history}:any) => {
+
+  
   const userData = useSelector((state:RootState) => state.userData.data);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [tableLoading, setTableLoading] = React.useState(true);
+  const [inputType, setInputType] = React.useState();
+  const [boardId, setBoardId] = React.useState();
   const [textData, setTextData] = React.useState();
   const [boardTitle, setBoardTitle] = React.useState();
   const [dataSource, setDataSource] = React.useState();
@@ -75,13 +79,21 @@ const MainAttend = ({history}:any) => {
       dataIndex: '',
       key: 'x',
       render: (index:any, recode:any, text:any) =>
-       <a 
-        onClick={() => {
-         console.log('수정')
-        }} 
-      >
-        수정
-      </a>,
+        <div>
+          <a 
+            onClick={() => {
+              setModalVisible(true)
+              setInputType('renew');
+              setTextData(recode.text);
+              setBoardTitle(recode.title);
+              setBoardId(recode.id);
+              console.log(recode)
+              console.log("aaaa")
+            }} 
+          > 
+            수정
+          </a>
+        </div>
     }
 
   ];
@@ -92,9 +104,13 @@ const MainAttend = ({history}:any) => {
 
   const onClick = () => {
     setModalVisible(!modalVisible);
+    setTextData('');
+    setBoardTitle('');
+    setInputType('new');
   }
 
   const handleOk = () => {
+    setTableLoading(true);
     const num:any = Object.values(dataSource)[0];
     let boardListNum:number = Object.values(dataSource).length !== 0 ? num.key : 0;
     const today = new Date();
@@ -110,32 +126,56 @@ const MainAttend = ({history}:any) => {
       month = '0' + month
     }
     const sendNum = ++boardListNum;
-    axios.post('/api/mainAttendBoardData',{
-      key:sendNum,
-      title:boardTitle,
-      name:userData.username,
-      text:textData,
-      date:year + month + day
-    }).then(() => {
-      console.log(sendNum)
-      axios.get('/api/mainAttendBoardData')
-      .then(res => {
-        setModalVisible(false);
-        setDataSource([...res.data.reverse()])
-      })
-      .then(() => {
-        setTableLoading(false);
-      })
-    }).then(() => {
-      console.log(sendNum)
-      axios.post('/api/mainscoreBoardData', {
+
+    if(inputType === 'new'){
+      axios.post('/api/mainAttendBoardData',{
         key:sendNum,
         title:boardTitle,
         name:userData.username,
+        text:textData,
         date:year + month + day
+      }).then((rrr) => {
+        axios.get('/api/mainAttendBoardData')
+        .then(res => {
+          setModalVisible(false);
+          setDataSource([...res.data.reverse()])
+        })
+        .then(() => {
+          setTableLoading(false);
+        })
+        return rrr
+      }).then((response) => {
+        axios.post('/api/mainscoreBoardData', {
+          key:sendNum,
+          title:boardTitle,
+          boardId:response.data.id,
+          name:userData.username,
+          date:year + month + day
+        })
       })
-    })
-    console.log('okok')
+    }else{
+      axios.patch('/api/mainAttendBoardData',{
+        id:boardId,
+        title:boardTitle,
+        text:textData,
+      }).then(() => {
+        axios.get(`/api/mainscoreBoardData/getBoard?getId=${boardId}`).then(res => {
+          axios.patch(`/api/mainscoreBoardData`,{
+            id:res.data.result[0]._id,
+            title:boardTitle,
+          })
+        })
+      }).then(() => {
+        axios.get('/api/mainAttendBoardData')
+        .then(res => {
+          setModalVisible(false);
+          setDataSource([...res.data.reverse()])
+        })
+        .then(() => {
+          setTableLoading(false);
+        })
+      })
+    }
   }
   
   const handleCancel = () => {
@@ -148,8 +188,9 @@ const MainAttend = ({history}:any) => {
   React.useEffect(() => {
     axios.get('/api/mainAttendBoardData').then(res => {
       setDataSource(res.data.reverse());
-      setTableLoading(false);
+      setTableLoading(false)
     })
+    console.log(boardId)
   }, [])
 
   return(
@@ -164,18 +205,6 @@ const MainAttend = ({history}:any) => {
           columns={userData.usertype === 'admin' ? columns2 : columns} 
           dataSource={dataSource}
           loading={tableLoading}
-          onRow={(recode, rowIndex) => {
-            return{
-              onClick: evnet => {
-                history.push(
-                  {
-                    pathname:'/mainAttend/data',
-                    state:recode
-                  }
-                )
-              }
-            }
-          }}
           pagination={{
               size:"small"
           }}
@@ -205,10 +234,11 @@ const MainAttend = ({history}:any) => {
               borderRadius:'5px', 
               marginTop:'30px',
             }}
+            value={boardTitle}
             className='attendTitle'
             onChange={titleChange} 
           />
-          <ReactQuill onChange={handleText} theme="snow" style={{marginTop:'20px', height:'570px'}} />
+          <ReactQuill value={textData} onChange={handleText} theme="snow" style={{marginTop:'20px', height:'570px'}} />
         </Modal>    
     </React.Fragment>
   )

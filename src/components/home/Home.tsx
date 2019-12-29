@@ -127,35 +127,30 @@ const Home = ({setLogin}) =>{
                                         참가신청
                                     </Link>
                                 </Menu.Item>
-                                <Menu.Item key="mainPhoto">
-                                    {
-                                        '준비중'
-                                        /*<Link to='/mainPhoto'>
-                                            정모사진    
-                                        </Link>*/
-                                    }
-                                </Menu.Item>
+                                { 
+                                /* <Menu.Item key="mainPhoto">
+                                    <Link to='/mainPhoto'>
+                                        정모사진    
+                                    </Link>
+                                 </Menu.Item> */ 
+                                }
                             </SubMenu>
                             <Menu.Item key="userInfo" onClick={menuClick}>
                                 <Link to= '/userInfo'>
                                     회원정보
                                 </Link> 
                             </Menu.Item>
-                            <Menu.Item key="name" onClick={menuClick}>
-                                {
-                                    '준비중'
-                                    /*<Link to='/hotMeeting'>
+                           { 
+                           /* <Menu.Item key="name" onClick={menuClick}>
+                                <Link to='/hotMeeting'>
                                     번개게시판
-                                    </Link>*/
-                                }
+                                </Link>
                             </Menu.Item>
-                           
-                            {
-                                /*<Menu.Item  key="/calendar" onClick={menuClick}>
-                                    <Link to='calendar'>
-                                        이달의 일정
-                                    </Link>
-                                </Menu.Item>*/
+                            <Menu.Item  key="/calendar" onClick={menuClick}>
+                                <Link to='calendar'>
+                                    이달의 일정
+                                </Link>
+                            </Menu.Item> */
                             }
                         </Menu>
                         
@@ -221,7 +216,6 @@ const Home = ({setLogin}) =>{
                 <Route exact={true} path='/calendar' component={Calendars}/>
                 <Route exact={true} path='/userInfo' component={UserInfo} />
                 <Route exact={true} path='/mainAttend/data' render={ (location) => <MainAttendInput location={location} userData={userData}/>} />
-
             </Switch>
         </Content>
         </Layout>
