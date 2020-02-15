@@ -106,9 +106,20 @@ const MainAttendInput = (location:any) => {
                     rowKey={(recode:any) => `${recode._id}`}
                     scroll={{y: 400 }}
                 />
+                <div
+                    style={{textAlign:'center', marginTop:'7%'}}
+                >
+                    {
+                       attendList
+                       ? 
+                       `${attendList.length} 명`
+                       :''
+                    } 
+                </div>
             </Modal>
         </React.Fragment>
     )
 }
 
 export default React.memo(MainAttendInput);
+

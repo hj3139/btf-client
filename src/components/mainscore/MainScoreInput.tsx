@@ -1,18 +1,14 @@
 import * as React from 'react';
-import { PageHeader, Input, Button, Table } from 'antd';
+import { PageHeader, Input, Button, Table, Modal } from 'antd';
 import axios from 'axios';
 import './MainScoreInput.css'
 
+
 const MainScoreInput = (location:any) =>{
-    const [scoreData, setScoreData] = React.useState({
-        firstGame:'0',
-        secondGame:'0',
-        thirdGame:'0',
-        fourGame:'0'
-    });
-    console.log(location)
+    const [scoreData, setScoreData] = React.useState();
     const [dataSource, setDataSource] = React.useState([{}]);
     const [buttonCount, setButtonCount] = React.useState(0);
+    const [allPinVisible, setAllPinVisible] = React.useState(false);
     const onChangeScore = (e:any) => {
         const name = e.target.name;
         const value = e.target.value;
@@ -38,14 +34,15 @@ const MainScoreInput = (location:any) =>{
             
             axios.get(`/api/mainScoreData/getMyScore?getName=${location.userData.data.username}&getId=${location.location.location.state.id}`)
             .then(res => {
-                console.log(res);
+
                 res.data.result.length > 0
                 ?
                 axios.patch(
                     `/api/mainScoreData/${res.data.result[0]._id}`,
                     {
                         score:scoreData,
-                        avg: (totalScore/Object.keys(scoreData).length).toFixed(2)
+                        avg: (totalScore/Object.keys(scoreData).length).toFixed(2),
+                        allPin:totalScore
                     }
                 ).then(() => {
                     setButtonCount(buttonCount + 1)
@@ -57,6 +54,7 @@ const MainScoreInput = (location:any) =>{
                     date:location.location.location.state.date,
                     boardId:location.location.location.state.id,
                     score:scoreData,
+                    allPin:totalScore,
                     avg: (totalScore/Object.keys(scoreData).length).toFixed(2)
                 }).then(() => {
                     setButtonCount(buttonCount + 1)
@@ -79,25 +77,22 @@ const MainScoreInput = (location:any) =>{
             :
                 (() => {
                     data.sort((a:any, b:any) => {
-                    return a.avg < b.avg ? 1 : a.avg > b.avg ? -1 : 0;
+                    return parseFloat(a.avg) < parseFloat(b.avg) ? 1 : parseFloat(a.avg) > parseFloat(b.avg) ? -1 : 0;
                 })
-
                 for(let j = 0; j < data.length; j++){
                     data[j].rank = j + 1
+                    
                 }
 
                 setDataSource(
                     data
                 );
-                
-
                 for(const i of res.data.result){
+
                     i.username === location.userData.data.username
                     ?
                     (() => {
-                        console.log(i.score)
                         setScoreData(i.score)
-                        
                     })()
                     :(()=> console.log())()
                 }
@@ -141,6 +136,18 @@ const MainScoreInput = (location:any) =>{
             title:'Avg',
             dataIndex:'avg',
             key:'avg',
+        }
+    ]
+    const colums2: any = [
+        {
+            title:'name',
+            dataIndex:'username',
+            key:"username", 
+        },
+        {
+            title:'총 핀',
+            dataIndex:'allPin',
+            key:'allPin',
         }
     ]
 
@@ -202,9 +209,37 @@ const MainScoreInput = (location:any) =>{
                 pagination={false}
                 rowKey={(recode:any) => `${recode.username}`}
             />
+
+            <Button 
+                style={{
+                    width:'50%', 
+                    margin:'10% auto', 
+                    left:'0', 
+                    right:'0', 
+                    position:'absolute'
+                }}
+                onClick={() => {setAllPinVisible(true)}}
+            >
+                총 핀
+            </Button>
+            <Modal
+                visible={allPinVisible}
+                onOk={() => setAllPinVisible(false)}
+                onCancel={() => setAllPinVisible(false)}
+            >
+                <Table 
+                    columns={colums2}
+                    dataSource={dataSource}
+                    pagination={false}
+                    style={{marginTop:'20px', width:'100%'}} 
+                    rowKey={(recode:any) => `${recode.username}`}
+                />
+            </Modal>
         </React.Fragment>
 
     )
 }
 
-export default MainScoreInput;
+export default React.memo(MainScoreInput);
+
+

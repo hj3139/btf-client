@@ -1,7 +1,7 @@
 
 import * as React from 'react';
 import { Form, Icon, Input, Button } from 'antd';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 const LoginComponent = ({handleChange, loginData, handleLogin, signPage}) => {
   return(
@@ -42,11 +42,11 @@ const LoginComponent = ({handleChange, loginData, handleLogin, signPage}) => {
           <Button type="primary" className="login-form-button" onClick={signPage}>
             회원가입
           </Button>
-          <Button type="primary" className="login-form-button">
+          {/*<Button type="primary" className="login-form-button">
             <Link to={`/guest`}>
               게스트
             </Link>
-          </Button>
+      </Button>*/}
         </Form.Item>
       </Form>
     </React.Fragment>

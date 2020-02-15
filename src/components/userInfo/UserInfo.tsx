@@ -82,7 +82,8 @@ const UserInfo = () => {
         <Table 
             columns={colums}
             rowKey={(recode:any) => `${recode.username}`}
-            dataSource={dataSource} 
+            dataSource={dataSource}
+            pagination={false} 
             loading={tableLoading}
             style={{color:'black'}}
         />

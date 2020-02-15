@@ -66,7 +66,7 @@ const handleJoin = () => {
     <React.Fragment>
        <div id="loginForm" style={{height:window.innerHeight}}>
             <img src={ logo } alt="logo" style={ {margin:'auto', display:'block', width:'360px'} } id="logo"/>
-     <Form 
+          <Form 
             style={{
                 width:'50%', 
                 minWidth:'264px', 
@@ -75,7 +75,7 @@ const handleJoin = () => {
                 bottom:'0', 
             }}
             className="login-form"
-        >
+          >
           <Form.Item>
             <Input
                prefix={ <Icon type="mail" style={{ color: 'rgba(0, 0, 0, .7)'}} />}
