@@ -29,7 +29,6 @@ const Calenders = () => {
   const dateClick = (info : any) => {   
 
     if(userData.usertype !== 'admin'){
-      console.log(false)
       axios.get('/api/calendarData')
        .then(res => {
          setEventList(
@@ -62,9 +61,6 @@ const Calenders = () => {
       setSelectables(!setSelectables)
       document.getElementsByClassName('fc-highlight')[0].appendChild(b)
     }
-    console.log(selectInfo)
-    console.log("aaaaa")
-
   }
 
   const addEvnet = () => {

@@ -72,16 +72,14 @@ const Login = () => {
   React.useEffect( () => {
     cookies.loginkey !== undefined && cookies.loginkey !== '' ? 
      axios.get('/api/accessTokens/getUser?getUser=' + cookies.loginkey + '&access_token=' + cookies.loginkey).then(async res => {
-       console.log(res)
        dispatch(loginKeyFc(res.data.result[0]));
      
        await axios.get('/api/users/' + res.data.result[0].userId + '?access_token=' + cookies.loginkey)
          .then(response => {
-           console.log(response);
            dispatch(userDataFc(response.data));
-         }).then(() => {
-          setLogin(true)
          })
+     }).then(() => {
+      setLogin(true)
      })
     :(() => {
       setLogin(false)

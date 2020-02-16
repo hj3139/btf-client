@@ -8,13 +8,13 @@ const SignupComponent = ({signPage}) => {
   interface IFormData {
     username:string;
     password:string;
-    securityNumber:string;
     email:string;
     sex:string;
+    mPoint:number;
   }
 
   
-const [form, setValues] = React.useState<IFormData>({username:'', password:'', securityNumber:'', email:'', sex:''});
+const [form, setValues] = React.useState<IFormData>({username:'', password:'', email:'', sex:'', mPoint:0});
 const today = new Date();
 const year = (today.getFullYear()).toString();
 let month = (today.getMonth() + 1).toString();
@@ -28,15 +28,11 @@ if(parseInt(month, 10) < 10){
   month = '0' + month
 }
 
-console.log(`${year}${month}${day}`);
-
 const handleChange = (e:any) => {
   setValues({
     ...form,
     [e.target.name] : e.target.value
   })
-
-  console.log(e.target.value);
  }
 
 const handleJoin = () => {
@@ -46,8 +42,8 @@ const handleJoin = () => {
       username : form.username,
       password : form.password,
       email:form.email,
-      securityNumber : form.securityNumber,
       sex: form.sex,
+      mPoint:form.mPoint,
       joinDate : `${year}${month}${day}` 
     }).then(res => {
       location.reload();
@@ -111,15 +107,6 @@ const handleJoin = () => {
               name="sex"
               onChange={handleChange}
               value={form.sex}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Input
-               prefix={ <Icon type="idcard" style={{ color: 'rgba(0, 0, 0, .7)'}} />}
-               placeholder="Six Digit Social Security Number"
-               name="securityNumber"
-               value={form.securityNumber}
-               onChange={handleChange}
             />
           </Form.Item>
           <Form.Item style={ {marginBottom:0} }>

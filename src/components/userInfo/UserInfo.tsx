@@ -1,20 +1,21 @@
 import * as React from 'react';
-import { PageHeader, Table } from 'antd';
+import { PageHeader, Table, Button, Modal } from 'antd';
 import {useCookies} from 'react-cookie';
 import axios from 'axios';
 
 const UserInfo = () => {
     const [cookies] =  useCookies(['loginkey']);
     const [dataSource, setDataSource] = React.useState();
+    const [modalVisible, setModalVisible] = React.useState(false);
     const [tableLoading, setTableLoading] = React.useState(true);
     const colums: any = [
         {
-            title:'rank',
+            title:'Rank',
             dataIndex:'rank',
             key:'rank',
         },
         {
-            title:'name',
+            title:'Name',
             dataIndex:'username',
             key:"username",
         },
@@ -22,8 +23,17 @@ const UserInfo = () => {
             title:'Avg',
             dataIndex:'avg',
             key:'avg',
+        },
+        {
+            title:'Mpoint',
+            dataIndex:'mPoint',
+            key:'mPoint'
         }
     ];
+
+    const handleClickPoint = () => {
+        setModalVisible(true);
+    }
 
     React.useEffect(() => {
         const datas:any = [];
@@ -32,13 +42,9 @@ const UserInfo = () => {
             for(const i of res.data){
                await axios.get('/api/mainscoreData/getAllAvg?getName=' + i.username + '&getId' + i.id )
                 .then(response => {
-                    console.log(response)
-                    
                     response.data.result.length > 0    
                     ?
                     (() => {
-                        
-                        
                         datas.push({
                             username:i.username,
                             avg:(() => {
@@ -47,7 +53,8 @@ const UserInfo = () => {
                                     avg += parseFloat(j.avg)
                                 }
                             return (avg/response.data.result.length).toFixed(2)
-                            })()
+                            })(),
+                            mPoint:i.mPoint + ' point'
                         })
                         datas.sort((a:any, b:any) => {
                             return a.avg < b.avg ? 1 : a.avg > b.avg ? -1 : 0;
@@ -55,7 +62,6 @@ const UserInfo = () => {
                         for(let j = 0; j < datas.length; j++){
                             datas[j].rank = j + 1
                         }
-         
                     })()
                     :(() => {
                         console.log('no data');
@@ -64,7 +70,6 @@ const UserInfo = () => {
             }
             setDataSource(datas);
         }).then(() => {
-            console.log(datas);
             setTableLoading(false);
         })
     }, [])
@@ -73,9 +78,13 @@ const UserInfo = () => {
         <React.Fragment>
             <PageHeader 
                 title={`회원정보`}
+                subTitle={`(각 회원의 정모 참여 횟수에 의한 정보입니다.)`}
                 style={{
                     background: "#00d0ff5e",
                 }}
+                extra={[
+                    <Button key="1" onClick ={handleClickPoint}>Mpoint 제도</Button>
+                ]}
             />
 
 
@@ -87,6 +96,21 @@ const UserInfo = () => {
             loading={tableLoading}
             style={{color:'black'}}
         />
+        <Modal 
+            visible={modalVisible}
+            title="mPoint"
+            onOk={() => setModalVisible(false)}
+            closable={false}
+            cancelButtonProps={{style:{display:'none'}}}
+            maskClosable={false}
+        >
+        <p>정모 랭킹 1 ~ 3등 및 스트라이크, 올커버, 생일자에 부여합니다.</p>
+        <p>추가적인 포인트는 클럽장 재량하에 부여합니다.</p>
+        <p>⦿ 정모 랭킹 1등 -> 3 point</p>
+        <p>⦿ 정모 랭킹 2등 -> 3 point</p>
+        <p>⦿ 정모 랭킹 3등 -> 3 point</p> 
+        <p>⦿ 스트라이크, 올커버, 생일자 -> 각 1 point</p>
+        </Modal>
         </React.Fragment>
     )
 }

@@ -34,11 +34,9 @@ const Home = ({setLogin}) =>{
         setPageState(key);
     }
     const logout = () => {
-        console.log(loginData);
         setCookie("loginkey",'', {path:'/'});   
         axios.post(`/api/users/logout?access_token=${loginData.id ? loginData.id : loginData._id}`).then(res => {
             setLogin(false) 
-            console.log(cookies)
         });
     }
     
@@ -48,6 +46,7 @@ const Home = ({setLogin}) =>{
             setHeaderName(res.data.username);
             return res;
         }) : (() => {console.log("no userData")})()
+        console.log(cookies)
     },[])
     console.log(pageState);
     return(       
@@ -205,7 +204,7 @@ const Home = ({setLogin}) =>{
                 </Link>   
             </Header>
           }
-        <Content style={{overflow:'scroll', position:'relative'}}>
+        <Content style={{overflow:'scroll', position:'relative', textAlign:'center'}}>
             <Switch>
                 <Route exact={true} path='/' render={() => <Redirect to='/mainscore' />} />
                 <Route exact={true} path='/mainscore' component={MainScoreBoard} />

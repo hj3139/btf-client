@@ -3,9 +3,6 @@ import { PageHeader, Button, Modal, Table } from 'antd';
 import axios from 'axios';
 
 const MainAttendInput = (location:any) => {
-    console.log(location);
-    console.log(location.userData);
-    // 신청버튼 취소버튼 로딩이 일단 디스어블시키고 신청유무후 버튼 활성화로 바꾸기. 현재는 활성화에서 디스어블시킴.
 
     const userData = location.userData.data;
     const [attendDisable, setAttendDisable] = React.useState(true);
@@ -15,7 +12,6 @@ const MainAttendInput = (location:any) => {
     const [tableLoading, setTableLoading] = React.useState(true);
 
     const columns = [
-       
         {
             title:'신청리스트',
             dataIndex:'username',
@@ -35,8 +31,7 @@ const MainAttendInput = (location:any) => {
         axios.post('/api/attendUsers',{
             username:userData.username,
             boardId:location.location.location.state.id
-        }).then(res => {
-            console.log(res)
+        }).then(() => {
             setAttendDisable(true);
             setDettendDisable(false);
         });
@@ -59,8 +54,6 @@ const MainAttendInput = (location:any) => {
     React.useEffect(() => {
         Object.values(userData).length > 0 ? axios.get(`/api/attendUsers/getUser?getName=${userData.username}&getBoardId=${location.location.location.state.id}`)
             .then(res => {
-                console.log(res.data.result[0].boardId);
-                console.log(location.location.location.state.id);
                 res.data.result.length > 0 
                 ? (() => {
                     setAttendDisable(true);
@@ -95,6 +88,9 @@ const MainAttendInput = (location:any) => {
                 bodyStyle={{top:'20px'}}
                 onOk={modalOk}
                 onCancel={modalCancel}
+                closable={false}
+                cancelButtonProps={{style:{display:'none'}}}
+                maskClosable={false}
             >
 
                 <Table 

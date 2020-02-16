@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Icon } from 'antd';
 
 const EventList = ({eventList}) => {
-   console.log(eventList);
     return(
         <React.Fragment>
            <div style={{width:'60%', margin:'0 auto', textAlign:'center'}}>

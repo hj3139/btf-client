@@ -24,7 +24,6 @@ const initialState: ILoginKeyState = {
 const login = (state = initialState, action: any) => {
     switch(action.type){
       case LOGINKEY :
-          console.log(action.loginKey)
           return{
               loginKey : action.loginKey
           }

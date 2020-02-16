@@ -87,8 +87,6 @@ const MainAttend = ({history}:any) => {
               setTextData(recode.text);
               setBoardTitle(recode.title);
               setBoardId(recode.id);
-              console.log(recode)
-              console.log("aaaa")
             }} 
           > 
             수정
@@ -150,6 +148,7 @@ const MainAttend = ({history}:any) => {
           title:boardTitle,
           boardId:response.data.id,
           name:userData.username,
+          close:'false',
           date:year + month + day
         })
       })
@@ -190,7 +189,6 @@ const MainAttend = ({history}:any) => {
       setDataSource(res.data.reverse());
       setTableLoading(false)
     })
-    console.log(boardId)
   }, [])
 
   return(
