@@ -2,12 +2,16 @@ import * as React from 'react';
 import { PageHeader, Table, Button, Modal } from 'antd';
 import {useCookies} from 'react-cookie';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/reducer';
 
 const UserInfo = () => {
     const [cookies] =  useCookies(['loginkey']);
     const [dataSource, setDataSource] = React.useState();
     const [modalVisible, setModalVisible] = React.useState(false);
     const [tableLoading, setTableLoading] = React.useState(true);
+    const userData = useSelector((state:RootState) => state.userData.data);
+    const loginData = useSelector((state:RootState) => state.login.loginKey);
     const colums: any = [
         {
             title:'Rank',
@@ -30,6 +34,23 @@ const UserInfo = () => {
             key:'mPoint'
         }
     ];
+
+    const handleResetPoint = () => {
+        setTableLoading(true);
+        axios.get('/api/users/getUser?getUser=undefined&getName=undefined&access_token=' + cookies.loginkey).then(async res => {
+            for(const i of res.data.result){
+                i.id = i._id
+                delete i._id
+                console.log(i)
+                await axios.put(`/api/users?&access_token=${loginData._id}`,{
+                    ...i,
+                    mPoint:0
+                })
+            }
+            alert('초기화완료');
+            window.location.reload()
+        })
+    }
 
     const handleClickPoint = () => {
         setModalVisible(true);
@@ -83,7 +104,17 @@ const UserInfo = () => {
                     background: "#00d0ff5e",
                 }}
                 extra={[
-                    <Button key="1" onClick ={handleClickPoint}>Mpoint 제도</Button>
+                    <React.Fragment key="1">
+                        <Button onClick ={handleClickPoint}>Mpoint 제도</Button>
+                        {
+                            userData.usertype === 'admin'
+                            ? 
+                            <Button onClick={handleResetPoint}>
+                                포인트 초기화
+                            </Button>
+                            :''
+                        }
+                    </React.Fragment>
                 ]}
             />
 
@@ -104,12 +135,16 @@ const UserInfo = () => {
             cancelButtonProps={{style:{display:'none'}}}
             maskClosable={false}
         >
-        <p>정모 랭킹 1 ~ 3등 및 스트라이크, 올커버, 생일자에 부여합니다.</p>
-        <p>추가적인 포인트는 클럽장 재량하에 부여합니다.</p>
-        <p>⦿ 정모 랭킹 1등 -> 3 point</p>
-        <p>⦿ 정모 랭킹 2등 -> 3 point</p>
-        <p>⦿ 정모 랭킹 3등 -> 3 point</p> 
-        <p>⦿ 스트라이크, 올커버, 생일자 -> 각 1 point</p>
+        <p>정모 랭킹 1 ~ 3등 및 스트라이크, 올커버에 부여합니다.</p>
+        <p>⦿ 정모 랭킹 1등 -> 50 point</p>
+        <p>⦿ 정모 랭킹 2등 -> 30 point</p>
+        <p>⦿ 정모 랭킹 3등 -> 10 point</p> 
+        <p>⦿ 올 커버 -> 30 point</p> 
+        <p>⦿ 남자 파이브베가, 여자 터키 -> 10 point</p>
+        <p>6개월마다 포인트 시상</p>                
+        <p>⦿ 1등 -> 15만원</p> 
+        <p>⦿ 2등 -> 10만원</p> 
+        <p>⦿ 3등 -> 5만원</p> 
         </Modal>
         </React.Fragment>
     )

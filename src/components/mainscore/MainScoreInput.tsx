@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { PageHeader, Input, Button, Table, Modal, Select,Tabs } from 'antd';
+import { PageHeader, Input, Button, Table, Modal, Select } from 'antd';
 import axios from 'axios';
 import './MainScoreInput.css'
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/reducer';
 
 const {Option} = Select;
-const {TabPane} = Tabs;
 
 const MainScoreInput = (location:any) => {
     const [scoreData, setScoreData] = React.useState();
@@ -15,9 +14,8 @@ const MainScoreInput = (location:any) => {
     const [allPinVisible, setAllPinVisible] = React.useState(false);
     const [addPointVisible, setAddPointVisible] = React.useState(false);
     const [children, setChildren] = React.useState();
-    const [strikeName, setStrikeName] = React.useState();
-    const [allCoverName, setAllCoverName] = React.useState();
-    const [birthdayName, setBirthdayName] = React.useState();
+    const [addPointName, setAddPointName] = React.useState('strike');
+    const [nameList, setNameList] = React.useState();
     const userData = useSelector((state:RootState) => state.userData.data);
     const loginData = useSelector((state:RootState) => state.login.loginKey);
     const onChangeScore = (e:any) => {
@@ -75,28 +73,27 @@ const MainScoreInput = (location:any) => {
     const handleAddPoint = () => {
         const array:any = [];
         for(const i  of dataSource){
-            array.push(<Option key={i.userId}>{i.username}</Option>)
+            array.push(<Option key={i.username}>{i.username}</Option>)
         } 
         setChildren(array);
         setAddPointVisible(true)
     }
     const addPoint = async () => {
-        const a = strikeName.concat(allCoverName);
-        const b = a.concat(birthdayName);
-        const result = b.filter(word => word !==undefined);
-
-        for(const i of result){
-          await axios.get(`/api/users/getUser?getUser=${i}&access_token=${loginData._id}`)
+        let plusPoint;
+        if(addPointName === 'strike'){plusPoint = 10;}
+        else{plusPoint = 30;}
+        for(const i of nameList){  
+          await axios.get(`/api/users/getUser?getUser=${undefined}&getName=${i}&access_token=${loginData._id}`)
             .then(async (res) => {
                 res.data.result[0].id = res.data.result[0]._id
                 delete res.data.result[0]._id
                 await axios.put(`/api/users?&access_token=${loginData._id}`,{
                 ...res.data.result[0],
-                mPoint:res.data.result[0].mPoint + 1
+                mPoint:res.data.result[0].mPoint + plusPoint 
               })
-            }) 
+            })
         }
-        setAddPointVisible(false);
+        alert("포인트 추가 완료");
     }
     React.useEffect(() => {
         axios.get(`/api/mainScoreData/getScoreAll?getId=${location.location.location.state.id}`)
@@ -292,76 +289,53 @@ const MainScoreInput = (location:any) => {
             </Modal>
             <Modal
                 visible={addPointVisible}
-                onOk={addPoint}
+                onOk={() => setAddPointVisible(false)}
                 onCancel={() => setAddPointVisible(false)}
                 closable={false}
                 maskClosable={false}
+                style={{textAlign:'center'}}
+                cancelButtonProps={{style:{display:'none'}}}
             >
-                <Tabs defaultActiveKey="스트라이크" animated={false}>
-                    <TabPane tab="스트라이크" key="스트라이크" style={{textAlign:'center'}}>
-                        <Select 
-                            mode='tags' 
-                            style={{
-                                width:'80%'
-                            }}    
-                            tokenSeparators={[',']}
-                            onChange={
-                                (e) => {
-                                    setStrikeName(e);
-                                }
-                            }
-                        >
-                            {
-                                children 
-                                ? 
-                                children
-                                :''
-                            }
-                        </Select>
-                    </TabPane>
-                    <TabPane tab="올커버" key="올커버" style={{textAlign:'center'}}>
-                            <Select 
-                            mode='tags' 
-                            style={{
-                                width:'80%'
-                            }}    
-                            tokenSeparators={[',']}
-                            onChange={
-                                (e) => {
-                                    setAllCoverName(e);
-                                }
-                            }
-                        >
-                            {
-                                children 
-                                ?        
-                                children
-                                :''
-                            }
-                        </Select>
-                    </TabPane>
-                    <TabPane tab="생일" key="생일" style={{textAlign:'center'}}>
-                        <Select 
-                            mode='tags' 
-                            style={{
-                                width:'80%'
-                            }}    
-                            tokenSeparators={[',']}
-                            onChange={
-                                (e) => {
-                                    setBirthdayName(e);
-                                }
-                            }
-                        >
-                            {         
-                                children 
-                                ? 
-                                children
-                                :''
-                            }
-                        </Select>
-                    </TabPane>
-                </Tabs>
+                <Select
+                    style={{
+                        width:'30%',
+                        marginBottom:'10px'
+                    }}
+                    defaultValue={addPointName}
+                    onChange={(e:string) => {
+                        setAddPointName(e)
+                    }}
+                >
+                    <Option value="strike">스트라이크</Option>
+                    <Option value="cover">올커버</Option>
+                </Select>
+                <Select 
+                    mode='multiple' 
+                    style={{
+                        width:'80%',
+                    }}    
+                    tokenSeparators={[',']}
+                    onChange={
+                        (e) => {
+                            setNameList(e);
+                        }
+                    }
+                >
+                    {
+                        children 
+                        ? 
+                        children
+                        :''
+                    }
+                </Select>
+                <Button 
+                    style={{
+                        marginTop:'10px'
+                    }}
+                    onClick={addPoint}
+                >
+                    포인트 추가
+                </Button>
             </Modal>
         </React.Fragment>
 

@@ -75,9 +75,9 @@ const MainScoreBoard = ({history}:any) => {
       key:'action',
       render: (text:any, record:any) => 
         <div 
-          onClick={() => record.close === 'false' ? handleSucces(record) : alert('집계완료')}
+          // onClick={() => record.close === 'false' ? handleSucces(record) : alert('집계완료')}
         >
-          집계
+         <a onClick={() => record.close === 'false' ? handleSucces(record) : alert('집계완료')}>집계</a>
         </div>
     }
   ]
@@ -101,10 +101,10 @@ const MainScoreBoard = ({history}:any) => {
         })()
       const ranker = data.splice(0, 3);
           return ranker
-    }).then((data) => {
-      const rankerPoint = [3,2,1];
+    }).then(async (data) => {
+      const rankerPoint = [50, 30, 10];
       for(let i = 0; i < rankerPoint.length; i++){
-        axios.get(`/api/users/getUser?getUser=${data[i].userId}&access_token=${loginData._id}`)
+       await axios.get(`/api/users/getUser?getUser=${data[i].userId}&getName=${undefined}&access_token=${loginData._id}`)
         .then((res) => {
           res.data.result[0].id = res.data.result[0]._id
           delete res.data.result[0]._id
@@ -113,7 +113,8 @@ const MainScoreBoard = ({history}:any) => {
             mPoint:res.data.result[0].mPoint + rankerPoint[i]
           })
         }) 
-        }
+      }
+      alert("집계 완료")
     })
     axios.put(`/api/mainscoreBoardData`, {
       ...record,
