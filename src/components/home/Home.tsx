@@ -13,6 +13,7 @@ import { UserInfo } from '../userInfo';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../reducer';
 import { MainPhotoBoard } from '../mainphoto';
+import { MainRain, MainRainData } from '../mainRain';
 import MainAttendInput from '../mainAttend/MainAttendInput';
 
 
@@ -133,6 +134,11 @@ const Home = ({setLogin}) =>{
                                     </Link>
                                  </Menu.Item> */ 
                                 }
+                                <Menu.Item key="mainRain">
+                                    <Link to='/mainRain'>
+                                        레인확인
+                                    </Link>
+                                </Menu.Item>
                             </SubMenu>
                             <Menu.Item key="userInfo" onClick={menuClick}>
                                 <Link to= '/userInfo'>
@@ -215,6 +221,8 @@ const Home = ({setLogin}) =>{
                 <Route exact={true} path='/calendar' component={Calendars}/>
                 <Route exact={true} path='/userInfo' component={UserInfo} />
                 <Route exact={true} path='/mainAttend/data' render={ (location) => <MainAttendInput location={location} userData={userData}/>} />
+                <Route exact={true} path='/mainRain' component={MainRain} />
+                <Route exact={true} path='/mainRain/data' render={ (location) => <MainRainData location={location} />} />
             </Switch>
         </Content>
         </Layout>
